@@ -27,6 +27,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+  {/* No global header: the only navbar is rendered inside authenticated panels (e.g. UserPanel) */}
         {children}
       </body>
     </html>

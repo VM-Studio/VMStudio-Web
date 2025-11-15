@@ -34,3 +34,11 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Security notes (project-specific)
+
+- Admin accounts must be provisioned out-of-band (do not allow public signup to create ADMIN). Use a secure script or direct DB migration for provisioning and rotate admin passwords after initial provisioning.
+- JWT secret: ensure `JWT_SECRET` in `.env` is a strong secret (use `openssl rand -base64 32`) and keep it out of source control.
+- Cookies: authentication cookie uses httpOnly and SameSite=strict; in production ensure the app runs over HTTPS so Secure cookie flag works as intended.
+- Notifications: for production realtime delivery, consider implementing WebPush or WebSocket; currently the UI polls every 30s for simplicity.
+

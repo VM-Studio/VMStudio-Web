@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  phone      String?  @unique
+  password   String
+  firstName  String
+  lastName   String
+  dni        String?
+  role       Role     @default(USER)
+  createdAt  DateTime @default(now())
+  projects   Project[]
+  notifications Notification[]
+  comments   Comment[]
+  leads      Lead[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Lead {
+  id         Int      @id @default(autoincrement())
+  name       String?
+  email      String
+  phone      String?
+  business   String?
+  details    String?
+  raw        Json?    // store full form payload if needed
+  createdAt  DateTime @default(now())
+  project    Project?
+  user       User?    @relation(fields: [userId], references: [id])
+  userId     Int?
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  title       String
+  client      User?    @relation(fields: [clientId], references: [id])
+  clientId    Int?
+  lead        Lead?    @relation(fields: [leadId], references: [id])
+  leadId      Int?     @unique
+  description String?
+  status      String   @default("pending")
+  tasks       ProjectTask[]
+  comments    Comment[]
+  notifications Notification[]
+  createdAt   DateTime @default(now())
+}
+
+model ProjectTask {
+  id        Int      @id @default(autoincrement())
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId Int
+  title     String
+  done      Boolean  @default(false)
+  order     Int      @default(0)
+}
+
+model Notification {
+  id         Int      @id @default(autoincrement())
+  toUser     User     @relation(fields: [toUserId], references: [id])
+  toUserId   Int
+  project    Project? @relation(fields: [projectId], references: [id])
+  projectId  Int?
+  message    String
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  project    Project  @relation(fields: [projectId], references: [id])
+  projectId  Int
+  author     User     @relation(fields: [authorId], references: [id])
+  authorId   Int
+  content    String
+  createdAt  DateTime @default(now())
+}
